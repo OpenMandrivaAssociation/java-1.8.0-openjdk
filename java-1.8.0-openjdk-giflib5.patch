@@ -1,0 +1,11 @@
+--- jdk8/jdk/src/share/native/sun/awt/splashscreen/splashscreen_gif.c.orig	2014-05-13 18:05:41.415221692 +0100
++++ jdk8/jdk/src/share/native/sun/awt/splashscreen/splashscreen_gif.c	2014-05-13 18:05:52.969222160 +0100
+@@ -318,7 +318,7 @@
+ int
+ SplashDecodeGifStream(Splash * splash, SplashStream * stream)
+ {
+-    GifFileType *gif = DGifOpen((void *) stream, SplashStreamGifInputFunc);
++    GifFileType *gif = DGifOpen((void *) stream, SplashStreamGifInputFunc, NULL);
+ 
+     if (!gif)
+         return 0;
