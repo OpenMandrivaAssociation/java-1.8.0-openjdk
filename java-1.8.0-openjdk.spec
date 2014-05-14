@@ -291,7 +291,7 @@ Summary: OpenJDK Runtime Environment
 Group:   Development/Java
 
 # Require /etc/pki/java/cacerts.
-Requires: ca-certificates
+Requires: rootcerts-java
 # Require jpackage-utils for ownership of /usr/lib/jvm/
 Requires: jpackage-utils
 # Require zoneinfo data provided by tzdata-java subpackage.
