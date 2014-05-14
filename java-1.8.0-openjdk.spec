@@ -147,7 +147,7 @@ Release: 4.%{buildver}%{?dist}
 # provides >= 1.6.0 must specify the epoch, "java >= 1:1.6.0".
 Epoch:   1
 Summary: OpenJDK Runtime Environment
-Group:   Development/Languages
+Group:   Development/Java
 
 License:  ASL 1.1 and ASL 2.0 and GPL+ and GPLv2 and GPLv2 with exceptions and LGPL+ and LGPLv2 and MPLv1.0 and MPLv1.1 and Public Domain and W3C
 URL:      http://openjdk.java.net/
@@ -288,7 +288,7 @@ The OpenJDK runtime environment.
 
 %package headless
 Summary: OpenJDK Runtime Environment
-Group:   Development/Languages
+Group:   Development/Java
 
 # Require /etc/pki/java/cacerts.
 Requires: ca-certificates
@@ -327,7 +327,7 @@ The OpenJDK runtime environment without audio and video support.
 
 %package devel
 Summary: OpenJDK Development Environment
-Group:   Development/Tools
+Group:   Development/Java
 
 # Require base package.
 Requires:         %{name} = %{epoch}:%{version}-%{release}
@@ -351,7 +351,7 @@ The OpenJDK development tools.
 
 %package demo
 Summary: OpenJDK Demos
-Group:   Development/Languages
+Group:   Development/Java
 
 Requires: %{name} = %{epoch}:%{version}-%{release}
 
@@ -360,7 +360,7 @@ The OpenJDK demos.
 
 %package src
 Summary: OpenJDK Source Bundle
-Group:   Development/Languages
+Group:   Development/Java
 
 Requires: %{name} = %{epoch}:%{version}-%{release}
 
@@ -369,7 +369,7 @@ The OpenJDK source bundle.
 
 %package javadoc
 Summary: OpenJDK API Documentation
-Group:   Documentation
+Group:   Development/Java
 Requires: jpackage-utils
 BuildArch: noarch
 
@@ -705,7 +705,7 @@ find $RPM_BUILD_ROOT%{_jvmdir}/%{jredir} -type d \
 find $RPM_BUILD_ROOT%{_jvmdir}/%{jredir} -type f -o -type l \
   | grep -v jre/lib/security \
   | sed 's|'$RPM_BUILD_ROOT'||' \
-  >> %{name}.files.all
+  > %{name}.files.all
 #split %{name}.files to %{name}.files-headless and %{name}.files
 #see https://bugzilla.redhat.com/show_bug.cgi?id=875408
 NOT_HEADLESS=\
@@ -1014,7 +1014,6 @@ exit 0
 %{_mandir}/man1/tnameserv-%{name}.1*
 %{_mandir}/man1/unpack200-%{name}.1*
 %{_jvmdir}/%{jredir}/lib/security/nss.cfg
-%{_jvmdir}/%{jredir}/lib/audio/
 %{_jvmdir}/%{jredir}/lib/security/US_export_policy.jar
 %{_jvmdir}/%{jredir}/lib/security/local_policy.jar
 
