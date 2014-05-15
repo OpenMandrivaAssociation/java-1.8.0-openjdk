@@ -965,8 +965,6 @@ fi
 
 exit 0
 
-%posttrans devel
-
 %post javadoc
 alternatives \
   --install %{_javadocdir}/java javadocdir %{_javadocdir}/%{name}/api \
