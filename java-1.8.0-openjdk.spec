@@ -223,6 +223,7 @@ Patch202: system-libpng.patch
 Patch203: system-lcms.patch
 
 Patch301: java-1.8.0-openjdk-giflib5.patch
+Patch302: java-1.8.0-openjdk-make-4.0.patch
 
 Patch999: 0001-PPC64LE-arch-support-in-openjdk-1.8.patch
 
@@ -453,6 +454,7 @@ sh %{SOURCE12}
 
 # omv patches
 %patch301
+%patch302 -p1
 
 # Extract systemtap tapsets
 %if %{with_systemtap}
