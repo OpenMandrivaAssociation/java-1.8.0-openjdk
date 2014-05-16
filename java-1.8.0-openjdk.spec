@@ -186,6 +186,8 @@ Source13: TestCryptoLevel.java
 Source100: config.guess
 Source101: config.sub
 
+Source200: java-1.8.0-openjdk.rpmlintrc
+
 # RPM/distribution specific patches
 
 # Ignore AWTError when assistive technologies are loaded 
