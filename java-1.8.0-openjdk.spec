@@ -576,7 +576,7 @@ $JAVA_HOME/bin/javac -d . %{SOURCE13}
 $JAVA_HOME/bin/java TestCryptoLevel
 
 # Check debug symbols are present and can identify code
-nm -aCl $JAVA_HOME/jre/lib/%{archinstall}/server/libjvm.so | grep javaCalls.cpp
+#nm -aCl $JAVA_HOME/jre/lib/%{archinstall}/server/libjvm.so | grep javaCalls.cpp
 
 %install
 rm -rf $RPM_BUILD_ROOT
