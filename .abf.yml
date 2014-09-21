@@ -1,4 +1,4 @@
 sources:
-  aarch64-port-jdk8-b128-aarch64-992.tar.xz: dc388a21e1e446ad72b72716831bf82493b18f9e
-  jdk8u-jdk8u5-b13.tar.xz: e05b8b3d45a5948eed9a629f410bfdfe7e474a12
+  jdk8-jdk8u40-b04.tar.xz: 227a58791e65ba23e47c11f7c600f77e15be04f2
+  jdk8u-jdk8u40-b02.tar.xz: b0ecb77e21468c958110c7eff364088ffa40620b
   systemtap-tapset.tar.gz: 44444c943de42c8d08dbf6954cb05a5275d1fa56

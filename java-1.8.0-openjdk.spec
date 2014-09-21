@@ -1,8 +1,6 @@
 # If debug is 1, OpenJDK is built with all debug info present.
 %global debug 0
 
-%global aarch64_hg_tag  992
-
 %global aarch64         aarch64 arm64 armv8
 %global multilib_arches %{power64} sparc64 x86_64 %{aarch64}
 %global jit_arches      %{ix86} x86_64 sparcv9 sparc64 %{aarch64}
@@ -89,10 +87,11 @@
 
 # Standard JPackage naming and versioning defines.
 %global origin          openjdk
-%global updatever       5
-%global buildver        b13
-%global aarch64_updatever 0
-%global aarch64_buildver b128
+%global updatever       40
+%global buildver        b02
+%global aarch64_updatever 40
+%global aarch64_buildver b04
+%global aarch64_changesetid a6df78e590bb
 # priority must be 6 digits in total
 %global priority        18000%{updatever}
 %global javaver         1.8.0
@@ -154,9 +153,9 @@ URL:      http://openjdk.java.net/
 
 # Source from upstrem OpenJDK8 project. To regenerate, use
 # ./generate_source_tarball.sh jdk8u jdk8u jdk8u%{updatever}-%{buildver}
-# ./generate_source_tarball.sh aarch64-port jdk8 %{aarch64_hg_tag}
+# ./generate_source_tarball.sh aarch64-port jdk8 jdk8u%{aarch64_updatever}-%{aarch64_buildver}
 Source0:  jdk8u-jdk8u%{updatever}-%{buildver}.tar.xz
-Source1:  aarch64-port-jdk8-%{aarch64_buildver}-aarch64-%{aarch64_hg_tag}.tar.xz
+Source1:  jdk8-jdk8u%{aarch64_updatever}-%{aarch64_buildver}.tar.xz
 
 # Custom README for -src subpackage
 Source2:  README.src
@@ -523,7 +522,7 @@ bash ../../configure \
     --with-build-number=%{buildver} \
 %else
     --with-build-number=%{aarch64_buildver} \
-    --with-user-release-suffix="aarch64-%{aarch64_hg_tag}" \
+    --with-user-release-suffix="aarch64-%{aarch64_updatever}-%{aarch64_buildver}" \
 %endif
     --with-boot-jdk=/usr/lib/jvm/java-openjdk \
     --with-debug-level=%{debugbuild} \
@@ -717,7 +716,8 @@ NOT_HEADLESS=\
 %{_jvmdir}/%{jredir}/lib/%{archinstall}/libpulse-java.so
 %{_jvmdir}/%{jredir}/lib/%{archinstall}/libsplashscreen.so
 %{_jvmdir}/%{jredir}/lib/%{archinstall}/libawt_xawt.so
-%{_jvmdir}/%{jredir}/lib/%{archinstall}/libjawt.so"
+%{_jvmdir}/%{jredir}/lib/%{archinstall}/libjawt.so
+%{_jvmdir}/%{uniquesuffix}/jre/bin/policytool"
 #filter %{name}.files from %{name}.files.all to %{name}.files-headless
 ALL=`cat %{name}.files.all`
 for file in $ALL ; do
