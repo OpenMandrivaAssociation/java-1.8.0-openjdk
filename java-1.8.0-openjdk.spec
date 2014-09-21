@@ -703,7 +703,7 @@ done
 find $RPM_BUILD_ROOT%{_jvmdir}/%{jredir} -type d \
   | grep -v jre/lib/security \
   | sed 's|'$RPM_BUILD_ROOT'|%dir |' \
-  > %{name}.files.headless
+  > %{name}.files-headless
 # Find JRE files.
 find $RPM_BUILD_ROOT%{_jvmdir}/%{jredir} -type f -o -type l \
   | grep -v jre/lib/security \
