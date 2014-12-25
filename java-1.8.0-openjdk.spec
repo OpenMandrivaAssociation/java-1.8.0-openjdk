@@ -88,9 +88,9 @@
 # Standard JPackage naming and versioning defines.
 %global origin          openjdk
 %global updatever       40
-%global buildver        b02
+%global buildver        b12
 %global aarch64_updatever 40
-%global aarch64_buildver b04
+%global aarch64_buildver b12
 %global aarch64_changesetid a6df78e590bb
 # priority must be 6 digits in total
 %global priority        18000%{updatever}
@@ -153,9 +153,9 @@ URL:      http://openjdk.java.net/
 
 # Source from upstrem OpenJDK8 project. To regenerate, use
 # ./generate_source_tarball.sh jdk8u jdk8u jdk8u%{updatever}-%{buildver}
-# ./generate_source_tarball.sh aarch64-port jdk8 jdk8u%{aarch64_updatever}-%{aarch64_buildver}
+# ./generate_source_tarball.sh aarch64-port jdk8 jdk8u%{aarch64_updatever}-%{aarch64_buildver}-aarch64
 Source0:  jdk8u-jdk8u%{updatever}-%{buildver}.tar.xz
-Source1:  jdk8-jdk8u%{aarch64_updatever}-%{aarch64_buildver}.tar.xz
+Source1:  jdk8-jdk8u%{aarch64_updatever}-%{aarch64_buildver}-aarch64.tar.xz
 
 # Custom README for -src subpackage
 Source2:  README.src

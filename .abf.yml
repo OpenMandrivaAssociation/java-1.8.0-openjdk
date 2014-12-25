@@ -1,4 +1,6 @@
 sources:
   jdk8-jdk8u40-b04.tar.xz: 227a58791e65ba23e47c11f7c600f77e15be04f2
+  jdk8-jdk8u40-b12-aarch64.tar.xz: be144bebf9a3d22c00e77b15308c69c5b152df77
   jdk8u-jdk8u40-b02.tar.xz: b0ecb77e21468c958110c7eff364088ffa40620b
+  jdk8u-jdk8u40-b12.tar.xz: c3c70bdf85c621f98045a3006c19c9b6081b911d
   systemtap-tapset.tar.gz: 44444c943de42c8d08dbf6954cb05a5275d1fa56
