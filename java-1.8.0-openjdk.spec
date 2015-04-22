@@ -435,7 +435,7 @@ sh %{SOURCE12}
 %patch201
 %patch202
 %patch203
-
+%patch204
 
 %patch1
 %patch2
@@ -460,6 +460,9 @@ sh %{SOURCE12}
 
 # omv patches
 %patch301
+
+%patch402
+%patch403
 
 %patch503
 
