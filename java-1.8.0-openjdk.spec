@@ -87,11 +87,11 @@
 
 # Standard JPackage naming and versioning defines.
 %global origin          openjdk
-%global updatever       40
-%global buildver        b12
-%global aarch64_updatever 40
-%global aarch64_buildver b12
-%global aarch64_changesetid a6df78e590bb
+%global updatever       45
+%global buildver        b13
+%global aarch64_updatever 45
+%global aarch64_buildver b13
+%global aarch64_changesetid aarch64-jdk8u45-b13
 # priority must be 6 digits in total
 %global priority        18000%{updatever}
 %global javaver         1.8.0
@@ -134,7 +134,7 @@
 
 Name:    java-%{javaver}-%{origin}
 Version: %{javaver}.%{updatever}
-Release: 4.%{buildver}%{?dist}
+Release: 1.%{buildver}
 # java-1.5.0-ibm from jpackage.org set Epoch to 1 for unknown reasons,
 # and this change was brought into RHEL-4.  java-1.5.0-ibm packages
 # also included the epoch in their virtual provides.  This created a
@@ -154,8 +154,8 @@ URL:      http://openjdk.java.net/
 # Source from upstrem OpenJDK8 project. To regenerate, use
 # ./generate_source_tarball.sh jdk8u jdk8u jdk8u%{updatever}-%{buildver}
 # ./generate_source_tarball.sh aarch64-port jdk8 jdk8u%{aarch64_updatever}-%{aarch64_buildver}-aarch64
-Source0:  jdk8u-jdk8u%{updatever}-%{buildver}.tar.xz
-Source1:  jdk8-jdk8u%{aarch64_updatever}-%{aarch64_buildver}-aarch64.tar.xz
+Source0:  jdk8u%{updatever}-jdk8u%{updatever}-%{buildver}.tar.xz
+Source1:  jdk8-jdk8u%{aarch64_updatever}-%{aarch64_buildver}-%{aarch64_changesetid}.tar.xz
 
 # Custom README for -src subpackage
 Source2:  README.src
@@ -224,9 +224,8 @@ Patch202: system-libpng.patch
 Patch203: system-lcms.patch
 
 Patch301: java-1.8.0-openjdk-giflib5.patch
-Patch302: java-1.8.0-openjdk-make-4.0.patch
 
-Patch999: 0001-PPC64LE-arch-support-in-openjdk-1.8.patch
+Patch503: d318d83c4e74.patch
 
 BuildRequires: autoconf
 BuildRequires: automake
@@ -450,12 +449,12 @@ sh %{SOURCE12}
 %ifarch ppc %{power64}
 # PPC fixes
 %patch103
-%patch999 -p1
 %endif
 
 # omv patches
 %patch301
-%patch302 -p1
+
+%patch503
 
 # Extract systemtap tapsets
 %if %{with_systemtap}
@@ -517,11 +516,9 @@ bash ../../configure \
 %endif
     --disable-zip-debug-info \
     --with-milestone="fcs" \
-%ifnarch %{aarch64}
     --with-update-version=%{updatever} \
     --with-build-number=%{buildver} \
-%else
-    --with-build-number=%{aarch64_buildver} \
+%ifarch %{aarch64}
     --with-user-release-suffix="aarch64-%{aarch64_updatever}-%{aarch64_buildver}" \
 %endif
     --with-boot-jdk=/usr/lib/jvm/java-openjdk \
