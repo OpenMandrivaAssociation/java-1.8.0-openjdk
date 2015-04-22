@@ -134,7 +134,7 @@
 
 Name:    java-%{javaver}-%{origin}
 Version: %{javaver}.%{updatever}
-Release: 1.%{buildver}
+Release: 2.%{buildver}
 # java-1.5.0-ibm from jpackage.org set Epoch to 1 for unknown reasons,
 # and this change was brought into RHEL-4.  java-1.5.0-ibm packages
 # also included the epoch in their virtual provides.  This created a
@@ -222,8 +222,15 @@ Patch103: %{name}-ppc-zero-hotspot.patch
 Patch201: system-libjpeg.patch
 Patch202: system-libpng.patch
 Patch203: system-lcms.patch
+Patch204: zero-interpreter-fix.patch
 
 Patch301: java-1.8.0-openjdk-giflib5.patch
+
+# Fixed in upstream 9. See upstream bug:
+# https://bugs.openjdk.java.net/browse/JDK-8067331
+Patch402: atomic_linux_zero.inline.hpp.patch
+# Fixes StackOverflowError on ARM32 bit Zero. See RHBZ#1206656
+Patch403: rhbz1206656_fix_current_stack_pointer.patch
 
 Patch503: d318d83c4e74.patch
 
