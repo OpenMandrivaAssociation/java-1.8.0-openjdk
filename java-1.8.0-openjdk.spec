@@ -88,7 +88,7 @@
 # Standard JPackage naming and versioning defines.
 %global origin          openjdk
 %global updatever       45
-%global buildver        b13
+%global buildver        b14
 %global aarch64_updatever 45
 %global aarch64_buildver b13
 %global aarch64_changesetid aarch64-jdk8u45-b13
@@ -225,6 +225,7 @@ Patch203: system-lcms.patch
 Patch204: zero-interpreter-fix.patch
 
 Patch301: java-1.8.0-openjdk-giflib5.patch
+Patch302: java-1.8.0-openjdk-giflib5.1.patch
 
 # Fixed in upstream 9. See upstream bug:
 # https://bugs.openjdk.java.net/browse/JDK-8067331
@@ -460,6 +461,9 @@ sh %{SOURCE12}
 
 # omv patches
 %patch301
+%if %mdvver >= 201500
+%patch302
+%endif
 
 %patch402
 %patch403
