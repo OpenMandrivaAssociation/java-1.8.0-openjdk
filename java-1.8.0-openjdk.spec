@@ -255,7 +255,7 @@ BuildRequires: pkgconfig(xproto)
 #BuildRequires: redhat-lsb
 BuildRequires: zip
 # OpenJDK X officially requires OpenJDK (X-1) to build
-BuildRequires: java-1.7.0-openjdk-devel
+BuildRequires: java-1.8.0-openjdk-devel
 # Zero-assembler build requirement.
 %ifnarch %{jit_arches}
 BuildRequires: pkgconfig(libffi)
