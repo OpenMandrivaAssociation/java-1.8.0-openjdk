@@ -87,8 +87,8 @@
 
 # Standard JPackage naming and versioning defines.
 %global origin          openjdk
-%global updatever       45
-%global buildver        b14
+%global updatever       60
+%global buildver        b16
 %global aarch64_updatever 45
 %global aarch64_buildver b13
 %global aarch64_changesetid aarch64-jdk8u45-b13
@@ -134,7 +134,7 @@
 
 Name:    java-%{javaver}-%{origin}
 Version: %{javaver}.%{updatever}
-Release: 2.%{buildver}
+Release: 1.%{buildver}
 # java-1.5.0-ibm from jpackage.org set Epoch to 1 for unknown reasons,
 # and this change was brought into RHEL-4.  java-1.5.0-ibm packages
 # also included the epoch in their virtual provides.  This created a
@@ -154,7 +154,7 @@ URL:      http://openjdk.java.net/
 # Source from upstrem OpenJDK8 project. To regenerate, use
 # ./generate_source_tarball.sh jdk8u jdk8u jdk8u%{updatever}-%{buildver}
 # ./generate_source_tarball.sh aarch64-port jdk8 jdk8u%{aarch64_updatever}-%{aarch64_buildver}-aarch64
-Source0:  jdk8u%{updatever}-jdk8u%{updatever}-%{buildver}.tar.xz
+Source0:  jdk8u-jdk8u%{updatever}-%{buildver}.tar.xz
 Source1:  jdk8-jdk8u%{aarch64_updatever}-%{aarch64_buildver}-%{aarch64_changesetid}.tar.xz
 
 # Custom README for -src subpackage
@@ -222,18 +222,13 @@ Patch103: %{name}-ppc-zero-hotspot.patch
 Patch201: system-libjpeg.patch
 Patch202: system-libpng.patch
 Patch203: system-lcms.patch
-Patch204: zero-interpreter-fix.patch
-
-Patch301: java-1.8.0-openjdk-giflib5.patch
-Patch302: java-1.8.0-openjdk-giflib5.1.patch
 
 # Fixed in upstream 9. See upstream bug:
-# https://bugs.openjdk.java.net/browse/JDK-8067331
-Patch402: atomic_linux_zero.inline.hpp.patch
 # Fixes StackOverflowError on ARM32 bit Zero. See RHBZ#1206656
 Patch403: rhbz1206656_fix_current_stack_pointer.patch
 
 Patch503: d318d83c4e74.patch
+Patch505: 1208369_memory_leak_gcc5.patch
 
 BuildRequires: autoconf
 BuildRequires: automake
@@ -260,7 +255,7 @@ BuildRequires: pkgconfig(xproto)
 #BuildRequires: redhat-lsb
 BuildRequires: zip
 # OpenJDK X officially requires OpenJDK (X-1) to build
-BuildRequires: java-1.8.0-openjdk-devel
+BuildRequires: java-1.7.0-openjdk-devel
 # Zero-assembler build requirement.
 %ifnarch %{jit_arches}
 BuildRequires: pkgconfig(libffi)
@@ -436,7 +431,6 @@ sh %{SOURCE12}
 %patch201
 %patch202
 %patch203
-%patch204
 
 %patch1
 %patch2
@@ -459,16 +453,10 @@ sh %{SOURCE12}
 %patch103
 %endif
 
-# omv patches
-%patch301
-%if %mdvver >= 201500
-%patch302
-%endif
-
-%patch402
 %patch403
 
 %patch503
+%patch505
 
 # Extract systemtap tapsets
 %if %{with_systemtap}
