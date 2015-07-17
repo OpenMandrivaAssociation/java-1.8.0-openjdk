@@ -58,7 +58,7 @@
 %global debugbuild release
 %endif
 
-%global buildoutputdir jdk8/build/jdk8.build
+%global buildoutputdir openjdk/build/jdk8.build
 
 %ifarch %{jit_arches}
 %global with_systemtap 1
@@ -87,8 +87,8 @@
 
 # Standard JPackage naming and versioning defines.
 %global origin          openjdk
-%global updatever       45
-%global buildver        b13
+%global updatever       51
+%global buildver        b16
 %global aarch64_updatever 45
 %global aarch64_buildver b13
 %global aarch64_changesetid aarch64-jdk8u45-b13
@@ -154,7 +154,7 @@ URL:      http://openjdk.java.net/
 # Source from upstrem OpenJDK8 project. To regenerate, use
 # ./generate_source_tarball.sh jdk8u jdk8u jdk8u%{updatever}-%{buildver}
 # ./generate_source_tarball.sh aarch64-port jdk8 jdk8u%{aarch64_updatever}-%{aarch64_buildver}-aarch64
-Source0:  jdk8u%{updatever}-jdk8u%{updatever}-%{buildver}.tar.xz
+Source0:  jdk8u-jdk8u%{updatever}-%{buildver}.tar.xz
 Source1:  jdk8-jdk8u%{aarch64_updatever}-%{aarch64_buildver}-%{aarch64_changesetid}.tar.xz
 
 # Custom README for -src subpackage
@@ -417,10 +417,13 @@ cp %{SOURCE2} .
 #
 # the configure macro will do this too, but it also passes a few flags not
 # supported by openjdk configure script
-cp %{SOURCE100} jdk8/common/autoconf/build-aux/
-cp %{SOURCE101} jdk8/common/autoconf/build-aux/
+cp %{SOURCE100} openjdk/common/autoconf/build-aux/
+cp %{SOURCE101} openjdk/common/autoconf/build-aux/
 
 # OpenJDK patches
+
+# For old patches
+ln -s openjdk jdk8
 
 # Remove libraries that are linked
 sh %{SOURCE12}
@@ -498,7 +501,7 @@ export ARCH_DATA_MODEL=64
 export CFLAGS="$CFLAGS -mieee"
 %endif
 
-(cd jdk8/common/autoconf
+(cd openjdk/common/autoconf
  bash ./autogen.sh
 )
 
@@ -685,7 +688,7 @@ cp -a %{buildoutputdir}/docs $RPM_BUILD_ROOT%{_javadocdir}/%{name}
 # Install icons and menu entries.
 for s in 16 24 32 48 ; do
   install -D -p -m 644 \
-    jdk8/jdk/src/solaris/classes/sun/awt/X11/java-icon${s}.png \
+    openjdk/jdk/src/solaris/classes/sun/awt/X11/java-icon${s}.png \
     $RPM_BUILD_ROOT%{_datadir}/icons/hicolor/${s}x${s}/apps/java-%{javaver}.png
 done
 
