@@ -58,7 +58,7 @@
 %global debugbuild release
 %endif
 
-%global buildoutputdir jdk8/build/jdk8.build
+%global buildoutputdir openjdk/build/jdk8.build
 
 %ifarch %{jit_arches}
 %global with_systemtap 1
@@ -87,11 +87,10 @@
 
 # Standard JPackage naming and versioning defines.
 %global origin          openjdk
-%global updatever       60
-%global buildver        b16
-%global aarch64_updatever 45
-%global aarch64_buildver b13
-%global aarch64_changesetid aarch64-jdk8u45-b13
+%global updatever       65
+%global buildver        b17
+%global aarch64_updatever %{updatever}
+%global aarch64_buildver %{buildver}
 # priority must be 6 digits in total
 %global priority        18000%{updatever}
 %global javaver         1.8.0
@@ -152,10 +151,9 @@ License:  ASL 1.1 and ASL 2.0 and GPL+ and GPLv2 and GPLv2 with exceptions and L
 URL:      http://openjdk.java.net/
 
 # Source from upstrem OpenJDK8 project. To regenerate, use
-# ./generate_source_tarball.sh jdk8u jdk8u jdk8u%{updatever}-%{buildver}
-# ./generate_source_tarball.sh aarch64-port jdk8 jdk8u%{aarch64_updatever}-%{aarch64_buildver}-aarch64
-Source0:  jdk8u-jdk8u%{updatever}-%{buildver}.tar.xz
-Source1:  jdk8-jdk8u%{aarch64_updatever}-%{aarch64_buildver}-%{aarch64_changesetid}.tar.xz
+# aarch64-port now contains integration forest of both aarch64 and normal jdk
+# ./generate_source_tarball.sh aarch64-port jdk8u60 aarch64-jdk8u60-b28
+Source0:  jdk8u60-aarch64-jdk8u%{updatever}-%{buildver}.tar.xz
 
 # Custom README for -src subpackage
 Source2:  README.src
@@ -228,7 +226,8 @@ Patch203: system-lcms.patch
 Patch403: rhbz1206656_fix_current_stack_pointer.patch
 
 Patch503: d318d83c4e74.patch
-Patch505: 1208369_memory_leak_gcc5.patch
+
+Patch604: aarch64-ifdefbugfix.patch
 
 BuildRequires: autoconf
 BuildRequires: automake
@@ -407,21 +406,19 @@ need to.
 
 
 %prep
-%ifarch %{aarch64}
-%global source_num 1
-%else
-%global source_num 0
-%endif
+%setup -q -c -n %{name} -T -a 0
 
-%setup -q -c -n %{name} -T -a %{source_num}
+# For old patches
+ln -s openjdk jdk8
+
 cp %{SOURCE2} .
 
 # replace outdated configure guess script
 #
 # the configure macro will do this too, but it also passes a few flags not
 # supported by openjdk configure script
-cp %{SOURCE100} jdk8/common/autoconf/build-aux/
-cp %{SOURCE101} jdk8/common/autoconf/build-aux/
+cp %{SOURCE100} openjdk/common/autoconf/build-aux/
+cp %{SOURCE101} openjdk/common/autoconf/build-aux/
 
 # OpenJDK patches
 
@@ -455,8 +452,9 @@ sh %{SOURCE12}
 
 %patch403
 
+%patch604
+
 %patch503
-%patch505
 
 # Extract systemtap tapsets
 %if %{with_systemtap}
@@ -500,7 +498,7 @@ export ARCH_DATA_MODEL=64
 export CFLAGS="$CFLAGS -mieee"
 %endif
 
-(cd jdk8/common/autoconf
+(cd openjdk/common/autoconf
  bash ./autogen.sh
 )
 
@@ -687,7 +685,7 @@ cp -a %{buildoutputdir}/docs $RPM_BUILD_ROOT%{_javadocdir}/%{name}
 # Install icons and menu entries.
 for s in 16 24 32 48 ; do
   install -D -p -m 644 \
-    jdk8/jdk/src/solaris/classes/sun/awt/X11/java-icon${s}.png \
+    openjdk/jdk/src/solaris/classes/sun/awt/X11/java-icon${s}.png \
     $RPM_BUILD_ROOT%{_datadir}/icons/hicolor/${s}x${s}/apps/java-%{javaver}.png
 done
 
