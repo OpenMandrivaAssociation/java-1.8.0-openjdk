@@ -87,11 +87,10 @@
 
 # Standard JPackage naming and versioning defines.
 %global origin          openjdk
-%global updatever       51
-%global buildver        b16
-%global aarch64_updatever 45
-%global aarch64_buildver b13
-%global aarch64_changesetid aarch64-jdk8u45-b13
+%global updatever       65
+%global buildver        b17
+%global aarch64_updatever %{updatever}
+%global aarch64_buildver %{buildver}
 # priority must be 6 digits in total
 %global priority        18000%{updatever}
 %global javaver         1.8.0
@@ -152,10 +151,9 @@ License:  ASL 1.1 and ASL 2.0 and GPL+ and GPLv2 and GPLv2 with exceptions and L
 URL:      http://openjdk.java.net/
 
 # Source from upstrem OpenJDK8 project. To regenerate, use
-# ./generate_source_tarball.sh jdk8u jdk8u jdk8u%{updatever}-%{buildver}
-# ./generate_source_tarball.sh aarch64-port jdk8 jdk8u%{aarch64_updatever}-%{aarch64_buildver}-aarch64
-Source0:  jdk8u-jdk8u%{updatever}-%{buildver}.tar.xz
-Source1:  jdk8-jdk8u%{aarch64_updatever}-%{aarch64_buildver}-%{aarch64_changesetid}.tar.xz
+# aarch64-port now contains integration forest of both aarch64 and normal jdk
+# ./generate_source_tarball.sh aarch64-port jdk8u60 aarch64-jdk8u60-b28
+Source0:  jdk8u60-aarch64-jdk8u%{updatever}-%{buildver}.tar.xz
 
 # Custom README for -src subpackage
 Source2:  README.src
@@ -223,9 +221,13 @@ Patch201: system-libjpeg.patch
 Patch202: system-libpng.patch
 Patch203: system-lcms.patch
 
-Patch301: java-1.8.0-openjdk-giflib5.patch
+# Fixed in upstream 9. See upstream bug:
+# Fixes StackOverflowError on ARM32 bit Zero. See RHBZ#1206656
+Patch403: rhbz1206656_fix_current_stack_pointer.patch
 
 Patch503: d318d83c4e74.patch
+
+Patch604: aarch64-ifdefbugfix.patch
 
 BuildRequires: autoconf
 BuildRequires: automake
@@ -404,13 +406,11 @@ need to.
 
 
 %prep
-%ifarch %{aarch64}
-%global source_num 1
-%else
-%global source_num 0
-%endif
+%setup -q -c -n %{name} -T -a 0
 
-%setup -q -c -n %{name} -T -a %{source_num}
+# For old patches
+ln -s openjdk jdk8
+
 cp %{SOURCE2} .
 
 # replace outdated configure guess script
@@ -431,7 +431,6 @@ sh %{SOURCE12}
 %patch201
 %patch202
 %patch203
-
 
 %patch1
 %patch2
@@ -454,8 +453,9 @@ sh %{SOURCE12}
 %patch103
 %endif
 
-# omv patches
-%patch301
+%patch403
+
+%patch604
 
 %patch503
 
