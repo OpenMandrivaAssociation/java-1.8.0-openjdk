@@ -87,12 +87,19 @@
 
 # Standard JPackage naming and versioning defines.
 %global origin          openjdk
-%global updatever       65
-%global buildver        b17
-%global aarch64_updatever %{updatever}
-%global aarch64_buildver %{buildver}
-# priority must be 6 digits in total
-%global priority        18000%{updatever}
+# note, following three variables are sedded from update_sources if used correctly. Hardcode them rather there.
+%global project         aarch64-port
+%global repo            jdk8u
+%global revision        aarch64-jdk8u77-b03
+# eg # jdk8u60-b27 -> jdk8u60 or # aarch64-jdk8u60-b27 -> aarch64-jdk8u60  (dont forget spec escape % by %%)
+%global whole_update    %(VERSION=%{revision}; echo ${VERSION%%-*})
+# eg  jdk8u60 -> 60 or aarch64-jdk8u60 -> 60
+%global updatever       %(VERSION=%{whole_update}; echo ${VERSION##*u})
+# eg jdk8u60-b27 -> b27
+%global buildver        %(VERSION=%{revision}; echo ${VERSION##*-})
+# priority must be 7 digits in total. The expression is workarounding tip
+%global priority        %(TIP=18000%{updatever};  echo ${TIP/tip/99})
+
 %global javaver         1.8.0
 
 # Standard JPackage directories and symbolic links.
@@ -153,7 +160,7 @@ URL:      http://openjdk.java.net/
 # Source from upstrem OpenJDK8 project. To regenerate, use
 # aarch64-port now contains integration forest of both aarch64 and normal jdk
 # ./generate_source_tarball.sh aarch64-port jdk8u60 aarch64-jdk8u60-b28
-Source0:  jdk8u60-aarch64-jdk8u%{updatever}-%{buildver}.tar.xz
+Source0:  %{project}-%{repo}-%{revision}.tar.xz
 
 # Custom README for -src subpackage
 Source2:  README.src
@@ -226,8 +233,6 @@ Patch203: system-lcms.patch
 Patch403: rhbz1206656_fix_current_stack_pointer.patch
 
 Patch503: d318d83c4e74.patch
-
-Patch604: aarch64-ifdefbugfix.patch
 
 BuildRequires: autoconf
 BuildRequires: automake
@@ -422,9 +427,6 @@ cp %{SOURCE101} openjdk/common/autoconf/build-aux/
 
 # OpenJDK patches
 
-# For old patches
-ln -s openjdk jdk8
-
 # Remove libraries that are linked
 sh %{SOURCE12}
 
@@ -454,8 +456,6 @@ sh %{SOURCE12}
 %endif
 
 %patch403
-
-%patch604
 
 %patch503
 
@@ -522,7 +522,7 @@ bash ../../configure \
     --with-update-version=%{updatever} \
     --with-build-number=%{buildver} \
 %ifarch %{aarch64}
-    --with-user-release-suffix="aarch64-%{aarch64_updatever}-%{aarch64_buildver}" \
+    --with-user-release-suffix="aarch64-%{updatever}-%{buildver}" \
 %endif
     --with-boot-jdk=/usr/lib/jvm/java-openjdk \
     --with-debug-level=%{debugbuild} \
