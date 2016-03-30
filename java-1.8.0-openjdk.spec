@@ -207,6 +207,24 @@ Patch4: PStack-808293.patch
 Patch5: multiple-pkcs11-library-init.patch
 # Disable doclint for compatibility
 Patch6: disable-doclint-by-default.patch
+# Local fixes
+# Turns off ECC support as we don't ship the SunEC provider currently
+Patch12: removeSunEcProvider-RH1154143.patch
+
+# PR2095, RH1163501: 2048-bit DH upper bound too small for Fedora infrastructure (sync with IcedTea 2.x)
+Patch504: rh1163501.patch
+# S4890063, PR2304, RH1214835: HPROF: default text truncated when using doe=n option
+Patch511: rh1214835.patch
+# Turn off strict overflow on IndicRearrangementProcessor{,2}.cpp following 8140543: Arrange font actions
+Patch512: no_strict_overflow.patch
+# Support for building the SunEC provider with the system NSS installation
+# PR1983: Support using the system installation of NSS with the SunEC provider
+# PR2127: SunEC provider crashes when built using system NSS
+# PR2815: Race condition in SunEC provider with system NSS
+Patch513: pr1983-jdk.patch
+Patch514: pr1983-root.patch
+Patch515: pr2127.patch
+Patch516: pr2815.patch
 
 #
 # OpenJDK specific patches
@@ -231,8 +249,6 @@ Patch203: system-lcms.patch
 # Fixed in upstream 9. See upstream bug:
 # Fixes StackOverflowError on ARM32 bit Zero. See RHBZ#1206656
 Patch403: rhbz1206656_fix_current_stack_pointer.patch
-
-Patch503: d318d83c4e74.patch
 
 BuildRequires: autoconf
 BuildRequires: automake
@@ -440,6 +456,7 @@ sh %{SOURCE12}
 %patch4
 %patch5
 %patch6
+%patch12
 
 %patch99
 
@@ -457,7 +474,13 @@ sh %{SOURCE12}
 
 %patch403
 
-%patch503
+%patch504
+%patch511
+%patch512
+#patch513
+#patch514
+#patch515
+#patch516
 
 # Extract systemtap tapsets
 %if %{with_systemtap}
@@ -487,6 +510,9 @@ for file in %{SOURCE9} %{SOURCE10} ; do
     sed -e s:@JAVA_HOME@:%{_jvmdir}/%{sdkdir}:g $file > $OUTPUT_FILE
     sed -i -e s:@VERSION@:%{version}-%{release}.%{_arch}:g $OUTPUT_FILE
 done
+
+# disable ec
+rm -rf openjdk/jdk/src/share/native/sun/security/ec/impl
 
 %build
 # How many cpu's do we have?
