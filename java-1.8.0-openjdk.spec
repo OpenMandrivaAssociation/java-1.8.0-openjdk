@@ -90,7 +90,7 @@
 # note, following three variables are sedded from update_sources if used correctly. Hardcode them rather there.
 %global project         aarch64-port
 %global repo            jdk8u
-%global revision        aarch64-jdk8u77-b03
+%global revision        aarch64-jdk8u91-b14
 # eg # jdk8u60-b27 -> jdk8u60 or # aarch64-jdk8u60-b27 -> aarch64-jdk8u60  (dont forget spec escape % by %%)
 %global whole_update    %(VERSION=%{revision}; echo ${VERSION%%-*})
 # eg  jdk8u60 -> 60 or aarch64-jdk8u60 -> 60
@@ -316,8 +316,8 @@ Group:   Development/Java
 
 # Require /etc/pki/java/cacerts.
 Requires: rootcerts-java
-# Require jpackage-utils for ownership of /usr/lib/jvm/
-Requires: jpackage-utils
+# Require javapackages-tools for ownership of /usr/lib/jvm/
+Requires: javapackages-tools
 # Require zoneinfo data provided by tzdata-java subpackage.
 Requires: tzdata-java
 # Post requires alternatives to install tool alternatives.
@@ -394,7 +394,7 @@ The OpenJDK source bundle.
 %package javadoc
 Summary: OpenJDK API Documentation
 Group:   Development/Java
-Requires: jpackage-utils
+Requires: javapackages-tools
 BuildArch: noarch
 
 # Post requires alternatives to install javadoc alternative.
