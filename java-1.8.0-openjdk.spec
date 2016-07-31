@@ -90,7 +90,7 @@
 # note, following three variables are sedded from update_sources if used correctly. Hardcode them rather there.
 %global project         aarch64-port
 %global repo            jdk8u
-%global revision        aarch64-jdk8u91-b14
+%global revision        aarch64-jdk8u101-b14
 # eg # jdk8u60-b27 -> jdk8u60 or # aarch64-jdk8u60-b27 -> aarch64-jdk8u60  (dont forget spec escape % by %%)
 %global whole_update    %(VERSION=%{revision}; echo ${VERSION%%-*})
 # eg  jdk8u60 -> 60 or aarch64-jdk8u60 -> 60
@@ -98,7 +98,7 @@
 # eg jdk8u60-b27 -> b27
 %global buildver        %(VERSION=%{revision}; echo ${VERSION##*-})
 # priority must be 7 digits in total. The expression is workarounding tip
-%global priority        %(TIP=18000%{updatever};  echo ${TIP/tip/99})
+%global priority        %(TIP=1800%{updatever};  echo ${TIP/tip/99})
 
 %global javaver         1.8.0
 
@@ -245,10 +245,6 @@ Patch103: %{name}-ppc-zero-hotspot.patch
 Patch201: system-libjpeg.patch
 Patch202: system-libpng.patch
 Patch203: system-lcms.patch
-
-# Fixed in upstream 9. See upstream bug:
-# Fixes StackOverflowError on ARM32 bit Zero. See RHBZ#1206656
-Patch403: rhbz1206656_fix_current_stack_pointer.patch
 
 BuildRequires: autoconf
 BuildRequires: automake
@@ -471,8 +467,6 @@ sh %{SOURCE12}
 # PPC fixes
 %patch103
 %endif
-
-%patch403
 
 %patch504
 %patch511
