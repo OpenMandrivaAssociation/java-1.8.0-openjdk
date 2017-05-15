@@ -574,6 +574,7 @@ make \
     STRIP_POLICY=no_strip \
     POST_STRIP_CMD="" \
     LOG=trace \
+    SCTP_WERROR= \
     all
 
 # the build (erroneously) removes read permissions from some jars
