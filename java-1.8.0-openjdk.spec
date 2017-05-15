@@ -90,7 +90,7 @@
 # note, following three variables are sedded from update_sources if used correctly. Hardcode them rather there.
 %global project         aarch64-port
 %global repo            jdk8u
-%global revision        aarch64-jdk8u101-b14
+%global revision        aarch64-jdk8u131-b11
 # eg # jdk8u60-b27 -> jdk8u60 or # aarch64-jdk8u60-b27 -> aarch64-jdk8u60  (dont forget spec escape % by %%)
 %global whole_update    %(VERSION=%{revision}; echo ${VERSION%%-*})
 # eg  jdk8u60 -> 60 or aarch64-jdk8u60 -> 60
@@ -521,6 +521,13 @@ export ARCH_DATA_MODEL=64
 export CFLAGS="$CFLAGS -mieee"
 %endif
 
+# We use because the OpenJDK build seems to
+# pass EXTRA_CFLAGS to the HotSpot C++ compiler...
+# Explicitly set the C++ standard as the default has changed on GCC >= 6
+EXTRA_CFLAGS=" -Wno-error -std=gnu++98 -fno-delete-null-pointer-checks -fno-lifetime-dse"
+EXTRA_CPP_FLAGS=" -std=gnu++98 -fno-delete-null-pointer-checks -fno-lifetime-dse"
+export EXTRA_CFLAGS
+
 (cd openjdk/common/autoconf
  bash ./autogen.sh
 )
@@ -554,8 +561,8 @@ bash ../../configure \
     --with-lcms=system \
     --with-stdc++lib=dynamic \
     --with-num-cores="$NUM_PROC" \
-    --with-extra-cflags="-fno-devirtualize" \
-    --with-extra-cxxflags="-fno-devirtualize"
+    --with-extra-cflags="$EXTRA_CFLAGS" \
+    --with-extra-cxxflags="$EXTRA_CPP_FLAGS"
 
 # The combination of FULL_DEBUG_SYMBOLS=0 and ALT_OBJCOPY=/does_not_exist
 # disables FDS for all build configs and reverts to pre-FDS make logic.

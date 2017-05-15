@@ -22,12 +22,12 @@ diff -r 1fe56343ecc8 src/share/lib/security/java.security-linux
  
  #
  # Sun Provider SecureRandom seed source.
-@@ -509,7 +509,7 @@
- #
+@@ -578,7 +578,7 @@
  # Example:
  #   jdk.tls.disabledAlgorithms=MD5, SSLv3, DSA, RSA keySize < 2048
--jdk.tls.disabledAlgorithms=SSLv3, RC4, MD5withRSA, DH keySize < 768
-+jdk.tls.disabledAlgorithms=SSLv3, RC4, MD5withRSA, DH keySize < 768, EC, ECDHE, ECDH
- 
+ jdk.tls.disabledAlgorithms=SSLv3, RC4, MD5withRSA, DH keySize < 768, \
+-    EC keySize < 224
++    EC, ECDHE, ECDH
+
  # Legacy algorithms for Secure Socket Layer/Transport Layer Security (SSL/TLS)
  # processing in JSSE implementation.
