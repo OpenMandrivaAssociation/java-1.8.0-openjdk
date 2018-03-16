@@ -90,7 +90,7 @@
 # note, following three variables are sedded from update_sources if used correctly. Hardcode them rather there.
 %global project         aarch64-port
 %global repo            jdk8u
-%global revision        aarch64-jdk8u131-b11
+%global revision        aarch64-jdk8u161-b14
 # eg # jdk8u60-b27 -> jdk8u60 or # aarch64-jdk8u60-b27 -> aarch64-jdk8u60  (dont forget spec escape % by %%)
 %global whole_update    %(VERSION=%{revision}; echo ${VERSION%%-*})
 # eg  jdk8u60 -> 60 or aarch64-jdk8u60 -> 60
@@ -171,7 +171,7 @@ Source3:  java-abrt-launcher.in
 # They are based on code contained in the IcedTea7 project.
 
 # Systemtap tapsets. Zipped up to keep it small.
-Source8: systemtap-tapset.tar.gz
+Source8: systemtap-tapset-3.6.0pre02.tar.xz
 
 # Desktop files. Adapated from IcedTea.
 Source9: jconsole.desktop.in
@@ -1044,8 +1044,7 @@ exit 0
 %{_mandir}/man1/tnameserv-%{name}.1*
 %{_mandir}/man1/unpack200-%{name}.1*
 %{_jvmdir}/%{jredir}/lib/security/nss.cfg
-%{_jvmdir}/%{jredir}/lib/security/US_export_policy.jar
-%{_jvmdir}/%{jredir}/lib/security/local_policy.jar
+%{_jvmdir}/%{jredir}/lib/security/policy
 
 %files devel
 %defattr(-,root,root,-)
