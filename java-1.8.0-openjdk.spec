@@ -116,6 +116,7 @@
 %global jredir          %{sdkdir}/jre
 %global sdkbindir       %{_jvmdir}/%{sdklnk}/bin
 %global jrebindir       %{_jvmdir}/%{jrelnk}/bin
+%global _jvmjardir	%{_prefix}/lib/jvm
 %ifarch %{multilib_arches}
 %global jvmjardir       %{_jvmjardir}/%{name}-%{version}.%{_arch}
 %else
@@ -140,7 +141,7 @@
 
 Name:    java-%{javaver}-%{origin}
 Version: %{javaver}.%{updatever}
-Release: 1.%{buildver}
+Release: 2.%{buildver}
 # java-1.5.0-ibm from jpackage.org set Epoch to 1 for unknown reasons,
 # and this change was brought into RHEL-4.  java-1.5.0-ibm packages
 # also included the epoch in their virtual provides.  This created a
@@ -1098,7 +1099,7 @@ exit 0
 %{_mandir}/man1/wsimport-%{name}.1*
 %{_mandir}/man1/xjc-%{name}.1*
 %if %{with_systemtap}
-%{tapsetroot}/*
+%{tapsetroot}/tapset/*/*.stp
 %endif
 
 %files demo -f %{name}-demo.files
