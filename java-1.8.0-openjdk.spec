@@ -730,7 +730,7 @@ done
 
 # Find JRE directories.
 find $RPM_BUILD_ROOT%{_jvmdir}/%{jredir} -type d \
-  | grep -v jre/lib/security \
+  | grep -vE '(jre/lib/security|/demo|/sample)' \
   | sed 's|'$RPM_BUILD_ROOT'|%dir |' \
   > %{name}.files-headless
 # Find JRE files.
@@ -1025,6 +1025,7 @@ exit 0
 %doc %{buildoutputdir}/images/j2sdk-image/jre/THIRD_PARTY_README
 
 %dir %{_jvmdir}/%{sdkdir}
+%exclude %{_jvmdir}/%{sdkdir}/src.zip
 %{_jvmdir}/%{jrelnk}
 %{_jvmjardir}/%{jrelnk}
 %{_jvmprivdir}/*
