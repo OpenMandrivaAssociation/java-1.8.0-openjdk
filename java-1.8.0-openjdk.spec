@@ -90,7 +90,9 @@
 # note, following three variables are sedded from update_sources if used correctly. Hardcode them rather there.
 %global project         aarch64-port
 %global repo            jdk8u
-%global revision        aarch64-jdk8u161-b14
+# Current version should be listed at
+# http://openjdk.java.net/projects/jdk8u/ or http://hg.openjdk.java.net/aarch64-port/jdk8u/tags
+%global revision        aarch64-jdk8u171-b11
 # eg # jdk8u60-b27 -> jdk8u60 or # aarch64-jdk8u60-b27 -> aarch64-jdk8u60  (dont forget spec escape % by %%)
 %global whole_update    %(VERSION=%{revision}; echo ${VERSION%%-*})
 # eg  jdk8u60 -> 60 or aarch64-jdk8u60 -> 60
@@ -141,7 +143,7 @@
 
 Name:    java-%{javaver}-%{origin}
 Version: %{javaver}.%{updatever}
-Release: 2.%{buildver}
+Release: 1.%{buildver}
 # java-1.5.0-ibm from jpackage.org set Epoch to 1 for unknown reasons,
 # and this change was brought into RHEL-4.  java-1.5.0-ibm packages
 # also included the epoch in their virtual provides.  This created a
@@ -160,8 +162,8 @@ URL:      http://openjdk.java.net/
 
 # Source from upstrem OpenJDK8 project. To regenerate, use
 # aarch64-port now contains integration forest of both aarch64 and normal jdk
-# ./generate_source_tarball.sh aarch64-port jdk8u60 aarch64-jdk8u60-b28
-Source0:  %{project}-%{repo}-%{revision}.tar.xz
+# PROJECT_NAME=aarch64-port REPO_NAME=jdk8u VERSION=aarch64-jdk8u171-b11 ./generate_source_tarball.sh
+Source0: %{project}-%{repo}-%{revision}.tar.xz
 
 # Custom README for -src subpackage
 Source2:  README.src
@@ -193,59 +195,114 @@ Source101: config.sub
 
 Source200: java-1.8.0-openjdk.rpmlintrc
 
-# RPM/distribution specific patches
-
+# Patches "borrowed" from Fedora
+# Accessibility patches
 # Ignore AWTError when assistive technologies are loaded 
-Patch1:   %{name}-accessible-toolkit.patch
-
-# RHBZ 1015432
-Patch2: 1015432.patch
+Patch1: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/%{name}-accessible-toolkit.patch
 # Restrict access to java-atk-wrapper classes
-Patch3: java-atk-wrapper-security.patch
-# RHBZ 808293
-Patch4: PStack-808293.patch
-# Allow multiple initialization of PKCS11 libraries
-Patch5: multiple-pkcs11-library-init.patch
-# Disable doclint for compatibility
-Patch6: disable-doclint-by-default.patch
-# Local fixes
-# Turns off ECC support as we don't ship the SunEC provider currently
-Patch12: removeSunEcProvider-RH1154143.patch
+Patch3: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/java-atk-wrapper-security.patch
 
+# Upstreamable patches
+# PR2737: Allow multiple initialization of PKCS11 libraries
+Patch5: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/multiple-pkcs11-library-init.patch
 # PR2095, RH1163501: 2048-bit DH upper bound too small for Fedora infrastructure (sync with IcedTea 2.x)
-Patch504: rh1163501.patch
+Patch504: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/rh1163501.patch
 # S4890063, PR2304, RH1214835: HPROF: default text truncated when using doe=n option
-Patch511: rh1214835.patch
+Patch511: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/rh1214835.patch
 # Turn off strict overflow on IndicRearrangementProcessor{,2}.cpp following 8140543: Arrange font actions
-Patch512: no_strict_overflow.patch
+Patch512: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/no_strict_overflow.patch
 # Support for building the SunEC provider with the system NSS installation
 # PR1983: Support using the system installation of NSS with the SunEC provider
 # PR2127: SunEC provider crashes when built using system NSS
 # PR2815: Race condition in SunEC provider with system NSS
-Patch513: pr1983-jdk.patch
-Patch514: pr1983-root.patch
-Patch515: pr2127.patch
-Patch516: pr2815.patch
+# PR2899: Don't use WithSeed versions of NSS functions as they don't fully process the seed
+Patch514: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/pr1983-root.patch
+Patch515: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/pr2127.patch
+Patch516: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/pr2815.patch
 
-#
-# OpenJDK specific patches
-#
+# S8150954, RH1176206, PR2866: Taking screenshots on x11 composite desktop produces wrong result
+# In progress: http://mail.openjdk.java.net/pipermail/awt-dev/2016-March/010742.html
+Patch508: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/rh1176206-jdk.patch
+Patch509: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/rh1176206-root.patch
 
-# Allow icedtea-web to build
-Patch99: applet-hole.patch
+# RH1337583, PR2974: PKCS#10 certificate requests now use CRLF line endings rather than system line endings
+Patch523: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/pr2974-rh1337583.patch
 
-# Recognize s390/s390x
-Patch100: %{name}-s390.patch
-# Type fixing for s390
-Patch101: %{name}-bitmap.patch
-Patch102: %{name}-size_t.patch
+# PR3083, RH1346460: Regression in SSL debug output without an ECC provider
+Patch528: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/pr3083-rh1346460.patch
 
-# Patch for PPC/PPC64
-Patch103: %{name}-ppc-zero-hotspot.patch
+# 8196516, RH1538767: libfontmanager.so needs to be built with LDFLAGS so as to allow
+#                     linking with unresolved symbols.
+Patch529: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/rhbz_1538767_fix_linking2.patch
 
-Patch201: system-libjpeg.patch
-Patch202: system-libpng.patch
-Patch203: system-lcms.patch
+# Upstreamable debugging patches
+# Patches 204 and 205 stop the build adding .gnu_debuglink sections to unstripped files
+Patch204: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/hotspot-remove-debuglink.patch
+Patch205: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/dont-add-unnecessary-debug-links.patch
+# Enable debug information for assembly code files
+Patch206: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/hotspot-assembler-debuginfo.patch
+# Arch-specific upstreamable patches
+# PR2415: JVM -Xmx requirement is too high on s390
+Patch100: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/%{name}-s390-java-opts.patch
+# Fix more cases of missing return statements on AArch64
+Patch104: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/pr3458-rh1540242.patch
+# Patches which need backporting to 8u
+# S8073139, RH1191652; fix name of ppc64le architecture
+Patch601: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/%{name}-rh1191652-root.patch
+Patch602: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/%{name}-rh1191652-jdk.patch
+Patch603: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/%{name}-rh1191652-hotspot-aarch64.patch
+# Include all sources in src.zip
+Patch7: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/include-all-srcs.patch
+# 8035341: Allow using a system installed libpng
+Patch202: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/system-libpng.patch
+# 8042159: Allow using a system-installed lcms2
+Patch203: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/system-lcms.patch
+# PR2462: Backport "8074839: Resolve disabled warnings for libunpack and the unpack200 binary"
+# This fixes printf warnings that lead to build failure with -Werror=format-security from optflags
+Patch502: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/pr2462.patch
+# S8148351, PR2842: Only display resolved symlink for compiler, do not change path
+Patch506: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/pr2842-01.patch
+Patch507: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/pr2842-02.patch
+# S8154313: Generated javadoc scattered all over the place
+Patch400: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/8154313.patch
+# S6260348, PR3066: GTK+ L&F JTextComponent not respecting desktop caret blink rate
+Patch526: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/6260348-pr3066.patch
+# 8061305, PR3335, RH1423421: Javadoc crashes when method name ends with "Property"
+Patch538: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/8061305-pr3335-rh1423421.patch
+Patch540: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/rhbz1548475-LDFLAGSusage.patch
+
+# 8188030, PR3459, RH1484079: AWT java apps fail to start when some minimal fonts are present
+Patch560: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/8188030-pr3459-rh1484079.patch
+
+# 8197429, PR3456, RH153662{2,3}: 32 bit java app started via JNI crashes with larger stack sizes
+Patch561: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/8197429-pr3456-rh1536622.patch
+
+# Patches ineligible for 8u
+# 8043805: Allow using a system-installed libjpeg
+Patch201: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/system-libjpeg.patch
+Patch209: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/8035496-hotspot.patch
+Patch210: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/suse_linuxfilestore.patch
+
+# custom securities
+Patch300: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/PR3183.patch
+
+# Local fixes
+# PR1834, RH1022017: Reduce curves reported by SSL to those in NSS
+Patch525: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/pr1834-rh1022017.patch
+
+# Turn on AssumeMP by default on RHEL systems
+Patch534: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/always_assumemp.patch
+
+# PR2888: OpenJDK should check for system cacerts database (e.g. /etc/pki/java/cacerts)
+Patch539: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/pr2888.patch
+
+# Shenandoah fixes
+
+# PR3573: Fix TCK crash with Shenandoah
+Patch700: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/pr3573.patch
+
+# Non-OpenJDK fixes
+Patch1000: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/enableCommentedOutSystemNss.patch
 
 BuildRequires: autoconf
 BuildRequires: automake
@@ -426,7 +483,7 @@ need to.
 %prep
 %setup -q -c -n %{name} -T -a 0
 
-# For old patches
+# Compatibility with old patches
 ln -s openjdk jdk8
 
 cp %{SOURCE2} .
@@ -443,39 +500,69 @@ cp %{SOURCE101} openjdk/common/autoconf/build-aux/
 # Remove libraries that are linked
 sh %{SOURCE12}
 
+# System library fixes
 %patch201
 %patch202
 %patch203
 
+# Debugging fixes
+%patch204
+%patch205
+%patch206
+%patch209
+%patch210
+%patch300
 %patch1
-%patch2
 %patch3
-%patch4
 %patch5
-%patch6
-%patch12
+%patch7
 
-%patch99
-
-# Type fixes for s390
-%ifarch s390 s390x
+# s390 build fixes
 %patch100
-%patch101
-%patch102
-%endif
 
-%ifarch ppc %{power64}
-# PPC fixes
-%patch103
-%endif
+# AArch64 fixes
+%patch104
 
+# ppc64le fixes
+%patch603
+%patch601
+%patch602
+
+# Zero fixes.
+
+# Upstreamable fixes
+%patch502
 %patch504
+%patch506
+%patch507
+%patch508
+%patch509
 %patch511
 %patch512
-#patch513
-#patch514
-#patch515
-#patch516
+%patch514
+%patch515
+%patch516
+%patch400
+%patch523
+%patch526
+%patch528
+%patch538
+%patch540
+%patch560
+pushd openjdk/jdk
+%patch529 -p1
+popd
+%patch561
+
+# RPM-only fixes
+%patch525
+%patch539
+
+# Shenandoah-only patches
+%if 0
+%patch700
+%endif
+%patch1000
 
 # Extract systemtap tapsets
 %if %{with_systemtap}
@@ -571,6 +658,8 @@ bash ../../configure \
 # ignore all the other logic about which debug options and just do '-g'.
 
 make \
+    JOBS="`getconf _NPROCESSORS_ONLN`" \
+    LCMS_LIBS="`pkg-config --libs lcms2`" \
     DEBUG_BINARIES=true \
     STRIP_POLICY=no_strip \
     POST_STRIP_CMD="" \
