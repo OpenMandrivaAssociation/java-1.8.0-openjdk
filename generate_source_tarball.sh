@@ -27,6 +27,7 @@ if [ ! "x$PR2126" = "x" ] ; then
 fi
 set -e
 
+OURDIR=$(realpath $(dirname $0))
 OPENJDK_URL_DEFAULT=http://hg.openjdk.java.net
 COMPRESSION_DEFAULT=xz
 # jdk is last for its size
@@ -134,6 +135,10 @@ fi
 find . -name '*.orig' -exec rm -vf '{}' ';'
 
 popd
+
+echo "Removing in-tree libraries"
+$OURDIR/remove-intree-libraries.sh
+
 echo "Compressing remaining forest"
 if [ "X$COMPRESSION" = "Xxz" ] ; then
     tar --exclude-vcs -cJf ${FILE_NAME_ROOT}.tar.${COMPRESSION} openjdk
