@@ -321,6 +321,7 @@ BuildRequires: pkgconfig(libpng)
 BuildRequires: xsltproc
 BuildRequires: pkgconfig(x11)
 BuildRequires: pkgconfig(xi)
+BuildRequires: pkgconfig(xcomposite)
 BuildRequires: pkgconfig(xinerama)
 BuildRequires: pkgconfig(xt)
 BuildRequires: pkgconfig(xtst)
@@ -625,17 +626,11 @@ bash ../../configure \
 %ifnarch %{jit_arches}
     --with-jvm-variants=zero \
 %endif
-%ifarch %{aarch64}
-    --with-jvm-variants=client \
-    --disable-precompiled-headers \
-%endif
     --disable-zip-debug-info \
     --with-milestone="fcs" \
     --with-update-version=%{updatever} \
     --with-build-number=%{buildver} \
-%ifarch %{aarch64}
-    --with-user-release-suffix="aarch64-%{updatever}-%{buildver}" \
-%endif
+    --with-user-release-suffix="openmandriva-%{version}-%{release}" \
     --with-boot-jdk=/usr/lib/jvm/java-openjdk \
     --with-debug-level=%{debugbuild} \
     --enable-unlimited-crypto \
