@@ -5,6 +5,11 @@
 %global multilib_arches %{power64} sparc64 x86_64 %{aarch64}
 %global jit_arches      %{ix86} x86_64 sparcv9 sparc64 %{aarch64}
 
+%ifarch %{arm}
+# Bug in dwz? causes infinite loop in dwz with openjdk
+%define _find_debuginfo_dwz_opts %{nil}
+%endif
+
 # sometimes we need to distinguish big and little endian PPC64
 # taken from the openjdk-1.7 spec
 %global ppc64le                 ppc64le
