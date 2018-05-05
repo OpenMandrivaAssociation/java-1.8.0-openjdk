@@ -97,7 +97,7 @@
 %global repo            jdk8u
 # Current version should be listed at
 # http://openjdk.java.net/projects/jdk8u/ or http://hg.openjdk.java.net/aarch64-port/jdk8u/tags
-%global revision        aarch64-jdk8u171-b11
+%global revision        aarch64-jdk8u171-b12
 # eg # jdk8u60-b27 -> jdk8u60 or # aarch64-jdk8u60-b27 -> aarch64-jdk8u60  (dont forget spec escape % by %%)
 %global whole_update    %(VERSION=%{revision}; echo ${VERSION%%-*})
 # eg  jdk8u60 -> 60 or aarch64-jdk8u60 -> 60
@@ -167,7 +167,7 @@ URL:      http://openjdk.java.net/
 
 # Source from upstrem OpenJDK8 project. To regenerate, use
 # aarch64-port now contains integration forest of both aarch64 and normal jdk
-# PROJECT_NAME=aarch64-port REPO_NAME=jdk8u VERSION=aarch64-jdk8u171-b11 ./generate_source_tarball.sh
+# PROJECT_NAME=aarch64-port REPO_NAME=jdk8u VERSION=aarch64-jdk8u171-b12 ./generate_source_tarball.sh
 Source0: %{project}-%{repo}-%{revision}.tar.xz
 
 # Custom README for -src subpackage
@@ -193,10 +193,6 @@ Source12: remove-intree-libraries.sh
 
 # Ensure we aren't using the limited crypto policy
 Source13: TestCryptoLevel.java
-
-# New versions of config files with aarch64 support. This is not upstream yet.
-Source100: config.guess
-Source101: config.sub
 
 Source200: java-1.8.0-openjdk.rpmlintrc
 
@@ -498,8 +494,8 @@ cp %{SOURCE2} .
 #
 # the configure macro will do this too, but it also passes a few flags not
 # supported by openjdk configure script
-cp %{SOURCE100} openjdk/common/autoconf/build-aux/
-cp %{SOURCE101} openjdk/common/autoconf/build-aux/
+cp %{_datadir}/automake-*/config.guess openjdk/common/autoconf/build-aux/
+cp %{_datadir}/automake-*/config.sub openjdk/common/autoconf/build-aux/
 
 # OpenJDK patches
 
