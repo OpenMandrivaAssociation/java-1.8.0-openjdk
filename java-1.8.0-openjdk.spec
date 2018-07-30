@@ -1,9 +1,8 @@
 # If debug is 1, OpenJDK is built with all debug info present.
 %global debug 0
 
-%global aarch64         aarch64 arm64 armv8
-%global multilib_arches %{power64} sparc64 x86_64 %{aarch64}
-%global jit_arches      %{ix86} x86_64 sparcv9 sparc64 %{aarch64}
+%global multilib_arches %{power64} sparc64 %{x86_64} %{aarch64}
+%global jit_arches      %{ix86} %{x86_64} sparcv9 sparc64 %{aarch64}
 
 %ifarch %{arm}
 # Bug in dwz? causes infinite loop in dwz with openjdk
@@ -15,7 +14,7 @@
 %global ppc64le                 ppc64le
 %global ppc64be                 ppc64 ppc64p7
 
-%ifarch x86_64
+%ifarch %{x86_64}
 %global archinstall amd64
 %endif
 %ifarch ppc
@@ -97,7 +96,7 @@
 %global repo            jdk8u
 # Current version should be listed at
 # http://openjdk.java.net/projects/jdk8u/ or http://hg.openjdk.java.net/aarch64-port/jdk8u/tags
-%global revision        aarch64-jdk8u171-b12
+%global revision        aarch64-jdk8u181-b14
 # eg # jdk8u60-b27 -> jdk8u60 or # aarch64-jdk8u60-b27 -> aarch64-jdk8u60  (dont forget spec escape % by %%)
 %global whole_update    %(VERSION=%{revision}; echo ${VERSION%%-*})
 # eg  jdk8u60 -> 60 or aarch64-jdk8u60 -> 60
@@ -167,7 +166,7 @@ URL:      http://openjdk.java.net/
 
 # Source from upstrem OpenJDK8 project. To regenerate, use
 # aarch64-port now contains integration forest of both aarch64 and normal jdk
-# PROJECT_NAME=aarch64-port REPO_NAME=jdk8u VERSION=aarch64-jdk8u171-b12 ./generate_source_tarball.sh
+# PROJECT_NAME=aarch64-port REPO_NAME=jdk8u VERSION=aarch64-jdk8u181-b14 ./generate_source_tarball.sh
 Source0: %{project}-%{repo}-%{revision}.tar.xz
 
 # Custom README for -src subpackage
@@ -245,8 +244,6 @@ Patch206: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/hot
 # Arch-specific upstreamable patches
 # PR2415: JVM -Xmx requirement is too high on s390
 Patch100: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/%{name}-s390-java-opts.patch
-# Fix more cases of missing return statements on AArch64
-Patch104: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/pr3458-rh1540242.patch
 # Patches which need backporting to 8u
 # S8073139, RH1191652; fix name of ppc64le architecture
 Patch601: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/%{name}-rh1191652-root.patch
@@ -281,7 +278,6 @@ Patch561: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/819
 # Patches ineligible for 8u
 # 8043805: Allow using a system-installed libjpeg
 Patch201: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/system-libjpeg.patch
-Patch209: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/8035496-hotspot.patch
 Patch210: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/suse_linuxfilestore.patch
 
 # custom securities
@@ -508,7 +504,6 @@ cp %{_datadir}/automake-*/config.sub openjdk/common/autoconf/build-aux/
 %patch204
 %patch205
 %patch206
-%patch209
 %patch210
 %patch300
 %patch1
@@ -518,9 +513,6 @@ cp %{_datadir}/automake-*/config.sub openjdk/common/autoconf/build-aux/
 
 # s390 build fixes
 %patch100
-
-# AArch64 fixes
-%patch104
 
 # ppc64le fixes
 %patch603
@@ -636,7 +628,7 @@ bash ../../configure \
     --with-update-version=%{updatever} \
     --with-build-number=%{buildver} \
     --with-user-release-suffix="openmandriva-%{version}-%{release}" \
-    --with-boot-jdk=/usr/lib/jvm/java-openjdk \
+    --with-boot-jdk=/usr/lib/jvm/java-1.8.0 \
     --with-debug-level=%{debugbuild} \
     --enable-unlimited-crypto \
     --with-zlib=system \
