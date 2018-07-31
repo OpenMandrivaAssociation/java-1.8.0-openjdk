@@ -1,6 +1,15 @@
 # If debug is 1, OpenJDK is built with all debug info present.
 %global debug 0
 
+%if %mdvver <= 3000000
+# not defined on 3.0
+%global aarch64         aarch64 arm64 armv8
+%global x86_64          x86_64
+%else
+# macro removed from javapackages
+%global _jvmjardir     %{_prefix}/lib/jvm-exports
+%endif
+
 %global multilib_arches %{power64} sparc64 %{x86_64} %{aarch64}
 %global jit_arches      %{ix86} %{x86_64} sparcv9 sparc64 %{aarch64}
 
@@ -122,7 +131,6 @@
 %global jredir          %{sdkdir}/jre
 %global sdkbindir       %{_jvmdir}/%{sdklnk}/bin
 %global jrebindir       %{_jvmdir}/%{jrelnk}/bin
-%global _jvmjardir	%{_prefix}/lib/jvm
 %ifarch %{multilib_arches}
 %global jvmjardir       %{_jvmjardir}/%{name}-%{version}.%{_arch}
 %else
