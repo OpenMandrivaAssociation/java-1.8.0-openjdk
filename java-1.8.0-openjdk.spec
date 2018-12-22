@@ -105,7 +105,7 @@
 %global repo            jdk8u
 # Current version should be listed at
 # http://openjdk.java.net/projects/jdk8u/ or http://hg.openjdk.java.net/aarch64-port/jdk8u/tags
-%global revision        aarch64-jdk8u181-b14
+%global revision        aarch64-jdk8u181-b15
 # eg # jdk8u60-b27 -> jdk8u60 or # aarch64-jdk8u60-b27 -> aarch64-jdk8u60  (dont forget spec escape % by %%)
 %global whole_update    %(VERSION=%{revision}; echo ${VERSION%%-*})
 # eg  jdk8u60 -> 60 or aarch64-jdk8u60 -> 60
@@ -174,7 +174,7 @@ URL:      http://openjdk.java.net/
 
 # Source from upstrem OpenJDK8 project. To regenerate, use
 # aarch64-port now contains integration forest of both aarch64 and normal jdk
-# PROJECT_NAME=aarch64-port REPO_NAME=jdk8u VERSION=aarch64-jdk8u181-b14 ./generate_source_tarball.sh
+# PROJECT_NAME=aarch64-port REPO_NAME=jdk8u VERSION=aarch64-jdk8u181-b15 ./generate_source_tarball.sh
 Source0: %{project}-%{repo}-%{revision}.tar.xz
 
 # Custom README for -src subpackage
@@ -546,7 +546,7 @@ cp %{_datadir}/automake-*/config.sub openjdk/common/autoconf/build-aux/
 %patch526
 %patch528
 %patch538
-%patch540
+%patch540 -p1 -b .0540~
 %patch560
 pushd openjdk/jdk
 %patch529 -p1
