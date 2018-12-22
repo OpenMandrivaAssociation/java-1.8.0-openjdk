@@ -613,7 +613,7 @@ export CFLAGS="$CFLAGS -mieee"
 # Explicitly set the C++ standard as the default has changed on GCC >= 6
 EXTRA_CFLAGS=" -Wno-error -std=gnu++98 -fno-delete-null-pointer-checks -fno-lifetime-dse"
 EXTRA_CPP_FLAGS=" -std=gnu++98 -fno-delete-null-pointer-checks -fno-lifetime-dse"
-%ifarch %{ix86}
+%ifarch %{ix86} %{arm}
 EXTRA_CFLAGS="$EXTRA_CFLAGS -mincoming-stack-boundary=2"
 EXTRA_CPP_FLAGS="$EXTRA_CPP_FLAGS -mincoming-stack-boundary=2"
 %endif
