@@ -608,6 +608,13 @@ export ARCH_DATA_MODEL=64
 export CFLAGS="$CFLAGS -mieee"
 %endif
 
+%ifarch %{arm}
+# Let's see if this fixes the crash on startup when javac is launched
+# for the first time...
+export CC=gcc
+export CXX=g++
+%endif
+
 # We use because the OpenJDK build seems to
 # pass EXTRA_CFLAGS to the HotSpot C++ compiler...
 # Explicitly set the C++ standard as the default has changed on GCC >= 6
