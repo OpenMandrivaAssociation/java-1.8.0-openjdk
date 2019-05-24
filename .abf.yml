@@ -1,3 +1,3 @@
 sources:
+  aarch64-port-jdk8u-shenandoah-aarch64-shenandoah-jdk8u212-b04.tar.xz: ca52171b9a47c3efd4714f974ca4e6c27d890c55
   systemtap-tapset-3.6.0pre02.tar.xz: 93bca27ce5eeeb2bc1f6f3cd4ffe34c3567a3c73
-  aarch64-port-jdk8u-aarch64-jdk8u181-b15.tar.xz: 3fe9db395fb57cc4d2a7b29664bae69a049560d6

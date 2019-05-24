@@ -102,10 +102,10 @@
 %global origin          openjdk
 # note, following three variables are sedded from update_sources if used correctly. Hardcode them rather there.
 %global project         aarch64-port
-%global repo            jdk8u
+%global repo            jdk8u-shenandoah
 # Current version should be listed at
 # http://openjdk.java.net/projects/jdk8u/ or http://hg.openjdk.java.net/aarch64-port/jdk8u/tags
-%global revision        aarch64-jdk8u181-b15
+%global revision        aarch64-shenandoah-jdk8u212-b04
 # eg # jdk8u60-b27 -> jdk8u60 or # aarch64-jdk8u60-b27 -> aarch64-jdk8u60  (dont forget spec escape % by %%)
 %global whole_update    %(VERSION=%{revision}; echo ${VERSION%%-*})
 # eg  jdk8u60 -> 60 or aarch64-jdk8u60 -> 60
@@ -245,7 +245,7 @@ Patch529: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/rhb
 
 # Upstreamable debugging patches
 # Patches 204 and 205 stop the build adding .gnu_debuglink sections to unstripped files
-Patch204: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/hotspot-remove-debuglink.patch
+#Patch204: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/hotspot-remove-debuglink.patch
 Patch205: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/dont-add-unnecessary-debug-links.patch
 # Enable debug information for assembly code files
 Patch206: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/hotspot-assembler-debuginfo.patch
@@ -509,49 +509,49 @@ cp %{_datadir}/automake-*/config.sub openjdk/common/autoconf/build-aux/
 %patch203
 
 # Debugging fixes
-%patch204
-%patch205
+#patch204
+#patch205
 %patch206
-%patch210
+#patch210
 %patch300
 %patch1
 %patch3
 %patch5
-%patch7
+#patch7
 
 # s390 build fixes
-%patch100
+#patch100
 
 # ppc64le fixes
 %patch603
-%patch601
-%patch602
+#patch601
+#patch602
 
 # Zero fixes.
 
 # Upstreamable fixes
 %patch502
 %patch504
-%patch506
-%patch507
-%patch508
-%patch509
+#patch506
+#patch507
+#patch508
+#patch509
 %patch511
-%patch512
+#patch512
 %patch514
 %patch515
 %patch516
 %patch400
 %patch523
-%patch526
+#patch526
 %patch528
-%patch538
-%patch540 -p1 -b .0540~
-%patch560
+#patch538
+#patch540 -p1 -b .0540~
+#patch560
 pushd openjdk/jdk
-%patch529 -p1
+#patch529 -p1
 popd
-%patch561
+#patch561
 
 # RPM-only fixes
 %patch525
