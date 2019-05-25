@@ -378,6 +378,8 @@ Group:   Development/Java
 Requires: rootcerts-java
 # Require javapackages-tools for ownership of /usr/lib/jvm/
 Requires: javapackages-tools
+# rpm macros in javapackages-local
+Requires: javapackages-local
 # Require zoneinfo data provided by tzdata-java subpackage.
 Requires: tzdata-java
 # Post requires alternatives to install tool alternatives.
