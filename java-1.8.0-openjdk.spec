@@ -105,7 +105,7 @@
 %global repo            jdk8u-shenandoah
 # Current version should be listed at
 # http://openjdk.java.net/projects/jdk8u/ or http://hg.openjdk.java.net/aarch64-port/jdk8u/tags
-%global revision        aarch64-shenandoah-jdk8u212-b04
+%global revision        aarch64-shenandoah-jdk8u222-b10
 # eg # jdk8u60-b27 -> jdk8u60 or # aarch64-jdk8u60-b27 -> aarch64-jdk8u60  (dont forget spec escape % by %%)
 %global whole_update    %(VERSION=%{revision}; echo ${VERSION%%-*})
 # eg  jdk8u60 -> 60 or aarch64-jdk8u60 -> 60
@@ -201,6 +201,8 @@ Source12: remove-intree-libraries.sh
 # Ensure we aren't using the limited crypto policy
 Source13: TestCryptoLevel.java
 
+Source14: TestECDSA.java
+
 Source200: java-1.8.0-openjdk.rpmlintrc
 
 # Patches "borrowed" from Fedora
@@ -219,14 +221,6 @@ Patch504: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/rh1
 Patch511: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/rh1214835.patch
 # Turn off strict overflow on IndicRearrangementProcessor{,2}.cpp following 8140543: Arrange font actions
 Patch512: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/no_strict_overflow.patch
-# Support for building the SunEC provider with the system NSS installation
-# PR1983: Support using the system installation of NSS with the SunEC provider
-# PR2127: SunEC provider crashes when built using system NSS
-# PR2815: Race condition in SunEC provider with system NSS
-# PR2899: Don't use WithSeed versions of NSS functions as they don't fully process the seed
-Patch514: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/pr1983-root.patch
-Patch515: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/pr2127.patch
-Patch516: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/pr2815.patch
 
 # S8150954, RH1176206, PR2866: Taking screenshots on x11 composite desktop produces wrong result
 # In progress: http://mail.openjdk.java.net/pipermail/awt-dev/2016-March/010742.html
@@ -237,7 +231,7 @@ Patch509: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/rh1
 Patch523: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/pr2974-rh1337583.patch
 
 # PR3083, RH1346460: Regression in SSL debug output without an ECC provider
-Patch528: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/pr3083-rh1346460.patch
+Patch528: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/pr3083-rh1346460-for_ssl_debug_return_null_instead_of_exception_when_theres_no_ecc_provider.patch
 
 # 8196516, RH1538767: libfontmanager.so needs to be built with LDFLAGS so as to allow
 #                     linking with unresolved symbols.
@@ -291,15 +285,11 @@ Patch210: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/sus
 # custom securities
 Patch300: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/PR3183.patch
 
-# Local fixes
-# PR1834, RH1022017: Reduce curves reported by SSL to those in NSS
-Patch525: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/pr1834-rh1022017.patch
-
 # Turn on AssumeMP by default on RHEL systems
 Patch534: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/always_assumemp.patch
 
 # PR2888: OpenJDK should check for system cacerts database (e.g. /etc/pki/java/cacerts)
-Patch539: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/pr2888.patch
+Patch539: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/pr2888-openjdk_should_check_for_system_cacerts_database_eg_etc_pki_java_cacerts.patch
 
 # Shenandoah fixes
 
@@ -347,7 +337,7 @@ BuildRequires: openssl
 # execstack build requirement.
 # no prelink on ARM yet
 %ifnarch %{arm} %{aarch64} ppc64le
-BuildRequires: prelink
+#BuildRequires: prelink
 %endif
 %if %{with_systemtap}
 BuildRequires: systemtap
@@ -539,9 +529,6 @@ cp %{_datadir}/automake-*/config.sub openjdk/common/autoconf/build-aux/
 #patch509
 %patch511
 #patch512
-%patch514
-%patch515
-%patch516
 %patch400
 %patch523
 #patch526
@@ -555,7 +542,6 @@ popd
 #patch561
 
 # RPM-only fixes
-%patch525
 %patch539
 
 # Shenandoah-only patches
@@ -592,9 +578,6 @@ for file in %{SOURCE9} %{SOURCE10} ; do
     sed -e s:@JAVA_HOME@:%{_jvmdir}/%{sdkdir}:g $file > $OUTPUT_FILE
     sed -i -e s:@VERSION@:%{version}-%{release}.%{_arch}:g $OUTPUT_FILE
 done
-
-# disable ec
-rm -rf openjdk/jdk/src/share/native/sun/security/ec/impl
 
 %build
 # How many cpu's do we have?
@@ -698,6 +681,10 @@ echo "sun.zoneinfo.dir=/usr/share/javazi" >> $JAVA_HOME/jre/lib/tz.properties
 # Check unlimited policy has been used
 $JAVA_HOME/bin/javac -d . %{SOURCE13}
 $JAVA_HOME/bin/java TestCryptoLevel
+
+# Check ECC is working
+$JAVA_HOME/bin/javac -d . %{SOURCE14}
+$JAVA_HOME/bin/java $(echo $(basename %{SOURCE14})|sed "s|\.java||")
 
 # Check debug symbols are present and can identify code
 #nm -aCl $JAVA_HOME/jre/lib/%{archinstall}/server/libjvm.so | grep javaCalls.cpp
