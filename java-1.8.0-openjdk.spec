@@ -84,7 +84,7 @@
 # specified relative to the directory in which it is installed so that
 # it will resolve properly within chrooted installations.
 %global script 'use File::Spec; print File::Spec->abs2rel($ARGV[0], $ARGV[1])'
-%global abs2rel %{__perl} -e %{script}
+%global abs2rel perl -e %{script}
 
 # Hard-code libdir on 64-bit architectures to make the 64-bit JDK
 # simply be another alternative.
@@ -313,6 +313,7 @@ BuildRequires: pkgconfig(lcms2)
 #BuildRequires: javapackages-local
 BuildRequires: jpeg-devel
 BuildRequires: pkgconfig(libpng)
+BuildRequires: perl
 BuildRequires: xsltproc
 BuildRequires: pkgconfig(x11)
 BuildRequires: pkgconfig(xi)
