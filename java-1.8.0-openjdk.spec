@@ -1,5 +1,6 @@
 # If debug is 1, OpenJDK is built with all debug info present.
 %global debug 0
+%global _jvmdir /usr/lib/jvm
 
 %if %mdvver <= 3000000
 # not defined on 3.0
@@ -105,7 +106,7 @@
 %global repo            jdk8u-shenandoah
 # Current version should be listed at
 # http://openjdk.java.net/projects/jdk8u/ or http://hg.openjdk.java.net/aarch64-port/jdk8u/tags
-%global revision        aarch64-shenandoah-jdk8u222-b10
+%global revision        aarch64-shenandoah-jdk8u302-b08
 # eg # jdk8u60-b27 -> jdk8u60 or # aarch64-jdk8u60-b27 -> aarch64-jdk8u60  (dont forget spec escape % by %%)
 %global whole_update    %(VERSION=%{revision}; echo ${VERSION%%-*})
 # eg  jdk8u60 -> 60 or aarch64-jdk8u60 -> 60
@@ -175,7 +176,7 @@ URL:      http://openjdk.java.net/
 # Source from upstrem OpenJDK8 project. To regenerate, use
 # aarch64-port now contains integration forest of both aarch64 and normal jdk
 # PROJECT_NAME=aarch64-port REPO_NAME=jdk8u VERSION=aarch64-jdk8u181-b15 ./generate_source_tarball.sh
-Source0: %{project}-%{repo}-%{revision}.tar.xz
+Source0: %{project}-%{repo}-%{revision}-4curve.tar.xz
 
 # Custom README for -src subpackage
 Source2:  README.src
@@ -205,16 +206,14 @@ Source14: TestECDSA.java
 
 Source200: java-1.8.0-openjdk.rpmlintrc
 
-# Patches "borrowed" from Fedora
-# Accessibility patches
-# Ignore AWTError when assistive technologies are loaded 
-Patch1: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/%{name}-accessible-toolkit.patch
-# Restrict access to java-atk-wrapper classes
-Patch3: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/java-atk-wrapper-security.patch
-
 # Upstreamable patches
 # PR2737: Allow multiple initialization of PKCS11 libraries
 Patch5: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/multiple-pkcs11-library-init.patch
+
+# Similar for GCC 11
+	
+Patch112: %{name}-gcc11.patch
+
 # PR2095, RH1163501: 2048-bit DH upper bound too small for Fedora infrastructure (sync with IcedTea 2.x)
 Patch504: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/rh1163501.patch
 # S4890063, PR2304, RH1214835: HPROF: default text truncated when using doe=n option
@@ -228,10 +227,11 @@ Patch508: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/rh1
 Patch509: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/rh1176206-root.patch
 
 # RH1337583, PR2974: PKCS#10 certificate requests now use CRLF line endings rather than system line endings
-Patch523: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/pr2974-rh1337583.patch
+Patch523: pr2974-rh1337583-add_systemlineendings_option_to_keytool_and_use_line_separator_instead_of_crlf_in_pkcs10.patch
 
 # PR3083, RH1346460: Regression in SSL debug output without an ECC provider
 Patch528: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/pr3083-rh1346460-for_ssl_debug_return_null_instead_of_exception_when_theres_no_ecc_provider.patch
+
 
 # 8196516, RH1538767: libfontmanager.so needs to be built with LDFLAGS so as to allow
 #                     linking with unresolved symbols.
@@ -256,15 +256,14 @@ Patch7: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/inclu
 # 8035341: Allow using a system installed libpng
 Patch202: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/system-libpng.patch
 # 8042159: Allow using a system-installed lcms2
-Patch203: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/system-lcms.patch
+Patch203: jdk8042159-allow_using_system_installed_lcms2-root.patch
+Patch204: jdk8042159-allow_using_system_installed_lcms2-jdk.patch
 # PR2462: Backport "8074839: Resolve disabled warnings for libunpack and the unpack200 binary"
 # This fixes printf warnings that lead to build failure with -Werror=format-security from optflags
 Patch502: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/pr2462.patch
 # S8148351, PR2842: Only display resolved symlink for compiler, do not change path
 Patch506: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/pr2842-01.patch
 Patch507: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/pr2842-02.patch
-# S8154313: Generated javadoc scattered all over the place
-Patch400: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/8154313.patch
 # S6260348, PR3066: GTK+ L&F JTextComponent not respecting desktop caret blink rate
 Patch526: https://src.fedoraproject.org/rpms/java-1.8.0-openjdk/raw/master/f/6260348-pr3066.patch
 # 8061305, PR3335, RH1423421: Javadoc crashes when method name ends with "Property"
@@ -311,7 +310,7 @@ BuildRequires: giflib-devel
 BuildRequires: gcc-c++
 BuildRequires: pkgconfig(gtk+-2.0)
 BuildRequires: pkgconfig(lcms2)
-BuildRequires: javapackages-local
+#BuildRequires: javapackages-local
 BuildRequires: jpeg-devel
 BuildRequires: pkgconfig(libpng)
 BuildRequires: xsltproc
@@ -461,22 +460,6 @@ Provides: java-%{javaver}-javadoc = %{epoch}:%{version}-%{release}
 The OpenJDK API documentation.
 
 
-%package accessibility
-Summary: OpenJDK accessibility connector
-Requires: java-atk-wrapper
-Requires: %{name} = %{epoch}:%{version}-%{release}
-
-%description accessibility
-Enables accessibility support in OpenJDK by using java-atk-wrapper. This allows
-compatible at-spi2 based accessibility programs to work for AWT and Swing-based
-programs.
-
-Please note, the java-atk-wrapper is still in beta, and OpenJDK itself is still
-being tuned to be working with accessibility features. There are known issues
-with accessibility on, so please do not install this package unless you really
-need to.
-
-
 %prep
 %setup -q -c -n %{name} -T -a 0
 
@@ -498,6 +481,7 @@ cp %{_datadir}/automake-*/config.sub openjdk/common/autoconf/build-aux/
 %patch201
 %patch202
 %patch203
+%patch204
 
 # Debugging fixes
 #patch204
@@ -505,8 +489,6 @@ cp %{_datadir}/automake-*/config.sub openjdk/common/autoconf/build-aux/
 %patch206
 #patch210
 %patch300
-%patch1
-%patch3
 %patch5
 #patch7
 
@@ -529,7 +511,6 @@ cp %{_datadir}/automake-*/config.sub openjdk/common/autoconf/build-aux/
 #patch509
 %patch511
 #patch512
-%patch400
 %patch523
 #patch526
 %patch528
@@ -540,6 +521,7 @@ pushd openjdk/jdk
 #patch529 -p1
 popd
 #patch561
+%patch112
 
 # RPM-only fixes
 %patch539
@@ -750,9 +732,6 @@ pushd %{buildoutputdir}/images/j2sdk-image
     done
   popd
 
-  # Install JCE policy symlinks.
-  install -d -m 755 $RPM_BUILD_ROOT%{_jvmprivdir}/%{archname}/jce/vanilla
-
   # Install versionless symlinks.
   pushd $RPM_BUILD_ROOT%{_jvmdir}
     ln -sf %{jredir} %{jrelnk}
@@ -872,20 +851,6 @@ find $RPM_BUILD_ROOT%{_jvmdir}/%{sdkdir}/demo \
   >> %{name}-demo.files
 
 # intentionally after the files generation, as it goes to separate package
-# Create links which leads to separately installed java-atk-bridge and allow configuration
-# links points to java-atk-wrapper - an dependence
-  pushd $RPM_BUILD_ROOT/%{_jvmdir}/%{jredir}/lib/%{archinstall}
-    ln -s %{syslibdir}/java-atk-wrapper/libatk-wrapper.so.0 libatk-wrapper.so
-  popd
-  pushd $RPM_BUILD_ROOT/%{_jvmdir}/%{jredir}/lib/ext
-     ln -s %{syslibdir}/java-atk-wrapper/java-atk-wrapper.jar  java-atk-wrapper.jar
-  popd
-  pushd $RPM_BUILD_ROOT/%{_jvmdir}/%{jredir}/lib/
-    echo "#Config file to  enable java-atk-wrapper" > accessibility.properties
-    echo "" >> accessibility.properties
-    echo "assistive_technologies=org.GNOME.Accessibility.AtkWrapper" >> accessibility.properties
-    echo "" >> accessibility.properties
-  popd
 
 %post
 update-desktop-database %{_datadir}/applications &> /dev/null || :
@@ -1109,7 +1074,6 @@ exit 0
 %exclude %{_jvmdir}/%{sdkdir}/src.zip
 %{_jvmdir}/%{jrelnk}
 %{_jvmjardir}/%{jrelnk}
-%{_jvmprivdir}/*
 %{jvmjardir}
 %dir %{_jvmdir}/%{jredir}/lib/security
 %{_jvmdir}/%{jredir}/lib/security/cacerts
@@ -1197,8 +1161,3 @@ exit 0
 %defattr(-,root,root,-)
 %doc %{_javadocdir}/%{name}
 %doc %{buildoutputdir}/images/j2sdk-image/jre/LICENSE
-
-%files accessibility
-%{_jvmdir}/%{jredir}/lib/%{archinstall}/libatk-wrapper.so
-%{_jvmdir}/%{jredir}/lib/ext/java-atk-wrapper.jar
-%{_jvmdir}/%{jredir}/lib/accessibility.properties
