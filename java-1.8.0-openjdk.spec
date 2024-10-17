@@ -171,7 +171,7 @@ Summary: OpenJDK Runtime Environment
 Group:   Development/Java
 
 License:  ASL 1.1 and ASL 2.0 and GPL+ and GPLv2 and GPLv2 with exceptions and LGPL+ and LGPLv2 and MPLv1.0 and MPLv1.1 and Public Domain and W3C
-URL:      http://openjdk.java.net/
+URL:      https://openjdk.java.net/
 
 # Source from upstrem OpenJDK8 project. To regenerate, use
 # aarch64-port now contains integration forest of both aarch64 and normal jdk
